@@ -24,6 +24,7 @@
       <button type="submit"
         class="block w-full max-w-xs mx-auto bg-[#7C177C] hover:bg-indigo-700 focus:bg-indigo-700 text-white rounded-lg px-3 py-3 font-semibold">Iniciar sesión</button>
     </div>
+    <app-loading *ngIf="isLoading"></app-loading>
   </div>
 </form>
 

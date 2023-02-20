@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { UserService } from '../user.service';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-register',
@@ -11,8 +11,9 @@ export class RegisterComponent implements OnInit {
   registerForm!: FormGroup;
   selectedFile!: File;
   imgSrc: any = null;
-  isLoading: Boolean = false;
-  showLogin: Boolean = false;
+  isLoading!: Boolean;
+  showLogin!: Boolean;
+  showSvg!: Boolean;
   dataAsk: any;
 
   constructor(
@@ -21,9 +22,9 @@ export class RegisterComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.userService.getLatestAskForm().subscribe((response)=>{
+    this.userService.getLatestAskForm().subscribe((response) => {
       this.dataAsk = response;
-    })
+    });
 
     this.registerForm = this.formBuilder.group({
       name: ['', Validators.required],
@@ -46,12 +47,15 @@ export class RegisterComponent implements OnInit {
     this.selectedFile = <File>event.target.files[0];
     if (this.selectedFile) {
       const reader = new FileReader();
-      reader.onload = (e) => (this.imgSrc = reader.result);
+      reader.onload = (e) => (
+        (this.showSvg = true), (this.imgSrc = reader.result)
+      );
       reader.readAsDataURL(this.selectedFile);
     }
   }
 
   onSubmit() {
+
     const formData = new FormData();
     formData.append('name', this.registerForm.value.name);
     formData.append('last_name', this.registerForm.value.last_name);
@@ -65,13 +69,18 @@ export class RegisterComponent implements OnInit {
     formData.append('favorite_artist', this.registerForm.value.favorite_artist);
     formData.append('favorite_place', this.registerForm.value.favorite_place);
     formData.append('favorite_color', this.registerForm.value.favorite_color);
+    formData.append('desc_ask_one', this.dataAsk.ask_one);
+    formData.append('desc_ask_two', this.dataAsk.ask_two);
+    formData.append('desc_ask_three', this.dataAsk.ask_three);
+    formData.append('desc_ask_four', this.dataAsk.ask_four);
+    formData.append('favorite_color', this.registerForm.value.favorite_color);
     formData.append('password', this.registerForm.value.password);
     formData.append(
       'confirm_password',
       this.registerForm.value.confirm_password
     );
     formData.append('profile_image', this.selectedFile, this.selectedFile.name);
-
+    
     this.isLoading = true;
     this.userService.registerUser(formData).subscribe(
       (response) => {

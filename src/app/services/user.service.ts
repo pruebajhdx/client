@@ -16,7 +16,6 @@ export class UserService {
     const token = localStorage.getItem('token');
     return token !== null;
   }
-  
 
   registerUser(user: any): Observable<any> {
     return this.http.post<any>(`${this.baseURL}/register`, user);
@@ -35,7 +34,7 @@ export class UserService {
   }
 
   getAllUserAdmin(headers:any): Observable<any> {
-    return this.http.get(`${this.baseURL}/users`, { headers })
+    return this.http.get<any>(`${this.baseURL}/users`, { headers })
   }
 
   getToken() {
@@ -43,23 +42,11 @@ export class UserService {
   }
 
   getLatestAskForm(): Observable<any> {
-    const url = `${this.baseURL}/ask-form`;
-    return this.http.get(url);
+    return this.http.get<any>( `${this.baseURL}/ask-form`);
   }
 
   updateAskForm(headers:any, id: any, askForm: any): Observable<any> {
     const url = `${this.baseURL}/ask-form/${id}`;
-    return this.http.put(url, askForm, {headers});
+    return this.http.put<any>(url, askForm, {headers});
   }
-
-  /*
-  createAskForm(headers:any, askForm: any): Observable<any> {
-    const url = `${this.baseURL}/ask-form`;
-    return this.http.post(url, askForm);
-  }
-  deleteAskForm(headers:any, id: any): Observable<any> {
-    const url = `${this.baseURL}/ask-form/${id}`;
-    return this.http.delete(url);
-  } */
-
 }

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { UserService } from '../user.service';
+import { UserService } from '../services/user.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -10,9 +10,12 @@ import { Router } from '@angular/router';
 })
 export class LoginComponent implements OnInit {
   loginForm!: FormGroup;
+  isLoading!: boolean;
   errorMessage: string = '';
   token: string = '';
   user!: void;
+  email: string = '';
+  password: string = '';
 
   constructor(
     private formBuilder: FormBuilder,
@@ -28,9 +31,12 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit() {
-    this.userService.login(this.loginForm.value.email, this.loginForm.value.password).subscribe(
+    this.email = this.loginForm.value.email;
+    this.password = this.loginForm.value.password;
+    this.isLoading = true;
+    this.userService.login(this.email, this.password).subscribe(
       (data) => {
-        console.log(data);
+        this.isLoading = false;
         // Guardar token de autenticación en localStorage o en una cookie
         this.token = data.token;
         localStorage.setItem('user', JSON.stringify(data.user))
@@ -40,6 +46,7 @@ export class LoginComponent implements OnInit {
       },
       (err) => {
         alert(err.error.message);
+        this.isLoading = false;
       }
     );
   }
